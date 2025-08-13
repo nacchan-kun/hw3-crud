@@ -3,6 +3,8 @@ import cors from 'cors';
 import pino from 'pino-http';
 
 import contactsRouter from './routers/contacts.js';
+import errorHandler from './middlewares/errorHandler.js';
+import notFoundHandler from './middlewares/notFoundHandler.js';
 
 export const setupServer = () => {
   const app = express();
@@ -23,12 +25,11 @@ export const setupServer = () => {
   // Реєстрація роутів
   app.use(contactsRouter);
 
-  // Обробка неіснуючих роутів (повертає статус 404)
-  app.use('*', (req, res) => {
-    res.status(404).json({
-      message: 'Not found',
-    });
-  });
+    // Middleware для обробки неіснуючих роутів
+    app.use(notFoundHandler);
+
+    // Middleware для обробки помилок
+    app.use(errorHandler);
 
   const PORT = process.env.PORT || 3000;
 
