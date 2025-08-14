@@ -1,3 +1,20 @@
+export const patchContactController = async (req, res, next) => {
+  try {
+    const { contactId } = req.params;
+    const updateData = req.body;
+    const updatedContact = await patchContactById(contactId, updateData);
+    if (!updatedContact) {
+      throw createError(404, 'Contact not found');
+    }
+    res.status(200).json({
+      status: 200,
+      message: "Successfully patched a contact!",
+      data: updatedContact,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 export const deleteContactController = async (req, res, next) => {
   try {
     const { contactId } = req.params;
@@ -10,7 +27,7 @@ export const deleteContactController = async (req, res, next) => {
     next(error);
   }
 };
-import { getAllContacts, getContactById, createContact, deleteContactById } from '../services/contacts.js';
+import { getAllContacts, getContactById, createContact, deleteContactById, patchContactById } from '../services/contacts.js';
 // ...existing code...
 export const createContactController = async (req, res, next) => {
   try {
