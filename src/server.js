@@ -22,6 +22,15 @@ export const setupServer = () => {
   // Middleware для парсингу JSON
   app.use(express.json());
 
+
+  // Welcome роут для кореня
+  app.get('/', (req, res) => {
+    res.status(200).json({
+      status: 200,
+      message: 'Welcome to hw3-crud API!',
+    });
+  });
+
   // Реєстрація роутів
   app.use(contactsRouter);
 
