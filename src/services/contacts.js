@@ -1,3 +1,21 @@
+export const getPaginatedContacts = async (page = 1, perPage = 10, type, isFavourite) => {
+  const skip = (page - 1) * perPage;
+  const filter = {};
+  if (type) filter.contactType = type;
+  if (typeof isFavourite !== 'undefined') filter.isFavourite = isFavourite === 'true';
+  const totalItems = await ContactsCollection.countDocuments(filter);
+  const contacts = await ContactsCollection.find(filter).skip(skip).limit(perPage);
+  const totalPages = Math.ceil(totalItems / perPage);
+  return {
+    data: contacts,
+    page,
+    perPage,
+    totalItems,
+    totalPages,
+    hasPreviousPage: page > 1,
+    hasNextPage: page < totalPages
+  };
+};
 export const patchContactById = async (contactId, updateData) => {
   const contact = await ContactsCollection.findByIdAndUpdate(contactId, updateData, { new: true });
   return contact;

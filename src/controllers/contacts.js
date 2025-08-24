@@ -27,8 +27,10 @@ export const deleteContactController = async (req, res, next) => {
     next(error);
   }
 };
-import { getAllContacts, getContactById, createContact, deleteContactById, patchContactById } from '../services/contacts.js';
-// ...existing code...
+
+import createError from 'http-errors';
+import { getContactById, createContact, deleteContactById, patchContactById, getPaginatedContacts } from '../services/contacts.js';
+
 export const createContactController = async (req, res, next) => {
   try {
     const { name, phoneNumber, email, isFavourite, contactType } = req.body;
@@ -48,23 +50,21 @@ export const createContactController = async (req, res, next) => {
     next(error);
   }
 };
-import createError from 'http-errors';
 
-export const getContactsController = async (req, res) => {
+export const getContactsController = async (req, res, next) => {
   try {
-    const contacts = await getAllContacts();
-
+    const page = parseInt(req.query.page, 10) || 1;
+    const perPage = parseInt(req.query.perPage, 10) || 10;
+    const type = req.query.type;
+    const isFavourite = req.query.isFavourite;
+    const result = await getPaginatedContacts(page, perPage, type, isFavourite);
     res.status(200).json({
       status: 200,
       message: "Successfully found contacts!",
-      data: contacts,
+      data: result,
     });
   } catch (error) {
-    res.status(500).json({
-      status: 500,
-      message: 'Something went wrong',
-      data: error.message,
-    });
+    next(error);
   }
 };
 
