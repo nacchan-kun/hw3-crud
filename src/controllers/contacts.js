@@ -39,7 +39,7 @@ export const createContactController = async (req, res, next) => {
       throw createError(400, 'Missing required fields: name, phoneNumber, contactType');
     }
 
-    const newContact = await createContact({ name, phoneNumber, email, isFavourite, contactType });
+    const newContact = await createContact({ name, phoneNumber, email, isFavourite, contactType }, req.user._id);
 
     res.status(201).json({
       status: 201,

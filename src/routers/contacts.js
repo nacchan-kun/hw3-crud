@@ -6,9 +6,11 @@ import { getContactsController, getContactByIdController, createContactControlle
 import { validateBody } from '../middlewares/validateBody.js';
 import isValidId from '../middlewares/isValidId.js';
 import { createContactSchema, updateContactSchema } from '../validation/contactSchemas.js';
+import authenticate from '../middlewares/authenticate.js';
 
 const router = Router();
 
+router.use(authenticate);
 router.get('/contacts', ctrlWrapper(getContactsController));
 router.get('/contacts/:contactId', isValidId, ctrlWrapper(getContactByIdController));
 router.post('/contacts', validateBody(createContactSchema), ctrlWrapper(createContactController));
