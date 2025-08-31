@@ -1,10 +1,15 @@
-export const getPaginatedContacts = async (page = 1, perPage = 10, type, isFavourite) => {
+export const getPaginatedContacts = async (page = 1, perPage = 10, type, isFavourite, sortBy, sortOrder) => {
   const skip = (page - 1) * perPage;
   const filter = {};
   if (type) filter.contactType = type;
   if (typeof isFavourite !== 'undefined') filter.isFavourite = isFavourite === 'true';
   const totalItems = await ContactsCollection.countDocuments(filter);
-  const contacts = await ContactsCollection.find(filter).skip(skip).limit(perPage);
+  const sortOptions = {};
+  if (sortBy) sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
+  const contacts = await ContactsCollection.find(filter)
+    .sort(sortOptions)
+    .skip(skip)
+    .limit(perPage);
   const totalPages = Math.ceil(totalItems / perPage);
   return {
     data: contacts,
