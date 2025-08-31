@@ -2,7 +2,7 @@ export const patchContactController = async (req, res, next) => {
   try {
     const { contactId } = req.params;
     const updateData = req.body;
-    const updatedContact = await patchContactById(contactId, updateData);
+    const updatedContact = await patchContactById(contactId, updateData, req.user._id);
     if (!updatedContact) {
       throw createError(404, 'Contact not found');
     }
@@ -18,7 +18,7 @@ export const patchContactController = async (req, res, next) => {
 export const deleteContactController = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const deletedContact = await deleteContactById(contactId);
+    const deletedContact = await deleteContactById(contactId, req.user._id);
     if (!deletedContact) {
       throw createError(404, 'Contact not found');
     }
@@ -51,6 +51,7 @@ export const createContactController = async (req, res, next) => {
   }
 };
 
+export const getContactsController = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page, 10) || 1;
     const perPage = parseInt(req.query.perPage, 10) || 10;
@@ -58,7 +59,7 @@ export const createContactController = async (req, res, next) => {
     const isFavourite = req.query.isFavourite;
     const sortBy = req.query.sortBy;
     const sortOrder = req.query.sortOrder || 'asc';
-    const result = await getPaginatedContacts(page, perPage, type, isFavourite, sortBy, sortOrder);
+    const result = await getPaginatedContacts(page, perPage, type, isFavourite, sortBy, sortOrder, req.user._id);
     res.status(200).json({
       status: 200,
       message: "Successfully found contacts!",
@@ -72,7 +73,7 @@ export const createContactController = async (req, res, next) => {
 export const getContactByIdController = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const contact = await getContactById(contactId);
+    const contact = await getContactById(contactId, req.user._id);
 
     if (!contact) {
       throw createError(404, 'Contact not found');

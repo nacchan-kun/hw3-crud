@@ -1,8 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
+import cookieParser from 'cookie-parser';
 
 import contactsRouter from './routers/contacts.js';
+import authRouter from './routers/auth.js';
 import errorHandler from './middlewares/errorHandler.js';
 import notFoundHandler from './middlewares/notFoundHandler.js';
 
@@ -22,6 +24,9 @@ export const setupServer = () => {
   // Middleware для парсингу JSON
   app.use(express.json());
 
+  // Middleware для парсингу cookies
+  app.use(cookieParser());
+
 
   // Welcome роут для кореня
   app.get('/', (req, res) => {
@@ -32,6 +37,7 @@ export const setupServer = () => {
   });
 
   // Реєстрація роутів
+  app.use('/auth', authRouter);
   app.use(contactsRouter);
 
     // Middleware для обробки неіснуючих роутів
