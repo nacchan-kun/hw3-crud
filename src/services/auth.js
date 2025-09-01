@@ -43,6 +43,29 @@ import createError from 'http-errors';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 
+export const getUserByEmail = async (email) => {
+  const user = await User.findOne({ email });
+  return user;
+};
+
+export const resetUserPassword = async (email, newPassword) => {
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  const user = await User.findOneAndUpdate(
+    { email },
+    { password: hashedPassword },
+    { new: true }
+  );
+  
+  if (!user) {
+    return null;
+  }
+
+  // Delete all sessions for this user
+  await Session.deleteMany({ userId: user._id });
+  
+  return user;
+};
+
 export const registerUser = async ({ name, email, password }) => {
   const existingUser = await User.findOne({ email });
   if (existingUser) {

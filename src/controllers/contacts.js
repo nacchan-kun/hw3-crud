@@ -1,35 +1,6 @@
-export const patchContactController = async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const updateData = req.body;
-    const updatedContact = await patchContactById(contactId, updateData, req.user._id);
-    if (!updatedContact) {
-      throw createError(404, 'Contact not found');
-    }
-    res.status(200).json({
-      status: 200,
-      message: "Successfully patched a contact!",
-      data: updatedContact,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-export const deleteContactController = async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const deletedContact = await deleteContactById(contactId, req.user._id);
-    if (!deletedContact) {
-      throw createError(404, 'Contact not found');
-    }
-    res.status(204).send();
-  } catch (error) {
-    next(error);
-  }
-};
-
 import createError from 'http-errors';
 import { getContactById, createContact, deleteContactById, patchContactById, getPaginatedContacts } from '../services/contacts.js';
+import { uploadToCloudinary } from '../services/cloudinary.js';
 
 export const createContactController = async (req, res, next) => {
   try {
@@ -39,7 +10,19 @@ export const createContactController = async (req, res, next) => {
       throw createError(400, 'Missing required fields: name, phoneNumber, contactType');
     }
 
-    const newContact = await createContact({ name, phoneNumber, email, isFavourite, contactType }, req.user._id);
+    const contactData = { name, phoneNumber, email, isFavourite, contactType };
+
+    // Handle photo upload if present
+    if (req.file) {
+      try {
+        const photoUrl = await uploadToCloudinary(req.file.buffer, req.file.originalname);
+        contactData.photo = photoUrl;
+      } catch {
+        throw createError(500, 'Failed to upload photo');
+      }
+    }
+
+    const newContact = await createContact(contactData, req.user._id);
 
     res.status(201).json({
       status: 201,
@@ -84,6 +67,48 @@ export const getContactByIdController = async (req, res, next) => {
       message: `Successfully found contact with id ${contactId}!`,
       data: contact,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const patchContactController = async (req, res, next) => {
+  try {
+    const { contactId } = req.params;
+    const updateData = { ...req.body };
+
+    // Handle photo upload if present
+    if (req.file) {
+      try {
+        const photoUrl = await uploadToCloudinary(req.file.buffer, req.file.originalname);
+        updateData.photo = photoUrl;
+      } catch {
+        throw createError(500, 'Failed to upload photo');
+      }
+    }
+
+    const updatedContact = await patchContactById(contactId, updateData, req.user._id);
+    if (!updatedContact) {
+      throw createError(404, 'Contact not found');
+    }
+    res.status(200).json({
+      status: 200,
+      message: "Successfully patched a contact!",
+      data: updatedContact,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteContactController = async (req, res, next) => {
+  try {
+    const { contactId } = req.params;
+    const deletedContact = await deleteContactById(contactId, req.user._id);
+    if (!deletedContact) {
+      throw createError(404, 'Contact not found');
+    }
+    res.status(204).send();
   } catch (error) {
     next(error);
   }
