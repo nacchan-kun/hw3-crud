@@ -1,0 +1,46 @@
+type: object
+properties:
+  status:
+    type: integer
+    description: HTTP status code
+    example: 200
+  message:
+    type: string
+    description: Response message
+    example: 'Successfully found contacts!'
+  data:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '../schemas/contact.yaml'
+        description: Array of contacts for current page
+      page:
+        type: integer
+        description: Current page number
+        example: 1
+      perPage:
+        type: integer
+        description: Number of items per page
+        example: 10
+      totalItems:
+        type: integer
+        description: Total number of contacts
+        example: 25
+      totalPages:
+        type: integer
+        description: Total number of pages
+        example: 3
+      hasPreviousPage:
+        type: boolean
+        description: Whether there is a previous page
+        example: false
+      hasNextPage:
+        type: boolean
+        description: Whether there is a next page
+        example: true
+required:
+  - status
+  - message
+  - data

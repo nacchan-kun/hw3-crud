@@ -1,0 +1,36 @@
+tags:
+  - Auth
+summary: User logout
+operationId: logoutUser
+description: Logout user by clearing refresh token from cookies and deleting session
+security:
+  - bearerAuth: []
+responses:
+  '204':
+    description: Successfully logged out
+  '401':
+    description: Unauthorized - No refresh token
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: 'No refresh token'
+  '500':
+    description: Internal server error
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 500
+            message:
+              type: string
+              example: 'Internal server error'

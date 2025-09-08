@@ -1,0 +1,57 @@
+tags:
+  - Contacts
+summary: Delete contact by ID
+operationId: deleteContactById
+description: Delete a specific contact by its ID for the authenticated user
+security:
+  - bearerAuth: []
+parameters:
+  - name: contactId
+    in: path
+    description: Contact ID
+    required: true
+    schema:
+      type: string
+      example: '60d5f7f8f1b2c8d4e5f6g7h8'
+responses:
+  '204':
+    description: Successfully deleted contact
+  '401':
+    description: Unauthorized - Invalid or missing token
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: 'Unauthorized'
+  '404':
+    description: Contact not found
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 404
+            message:
+              type: string
+              example: 'Contact not found'
+  '500':
+    description: Internal server error
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 500
+            message:
+              type: string
+              example: 'Internal server error'

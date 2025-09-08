@@ -1,0 +1,73 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Contacts Management API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: |
+    A comprehensive API for managing contacts with authentication, email features, and image uploads.
+
+    Features:
+    - User authentication with JWT tokens
+    - Contact CRUD operations with pagination, sorting, and filtering
+    - Password reset via email
+    - Photo upload for contacts using Cloudinary
+    - Session management
+
+tags:
+  - name: Auth
+    description: Authentication and user management endpoints
+  - name: Contacts
+    description: Contact management operations
+  - name: Users
+    description: User profile operations
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: https://your-deployed-app.onrender.com
+    description: Production server
+
+paths:
+  # Auth endpoints
+  /auth/register:
+    post:
+      $ref: '../swagger/paths/auth/register.yaml'
+  /auth/login:
+    post:
+      $ref: '../swagger/paths/auth/login.yaml'
+  /auth/refresh:
+    post:
+      $ref: '../swagger/paths/auth/refresh.yaml'
+  /auth/logout:
+    post:
+      $ref: '../swagger/paths/auth/logout.yaml'
+  /auth/send-reset-email:
+    post:
+      $ref: '../swagger/paths/auth/send-reset-email.yaml'
+  /auth/reset-pwd:
+    post:
+      $ref: '../swagger/paths/auth/reset-pwd.yaml'
+
+  # Contact endpoints
+  /contacts:
+    get:
+      $ref: '../swagger/paths/contacts/get.yaml'
+    post:
+      $ref: '../swagger/paths/contacts/post.yaml'
+  /contacts/{contactId}:
+    get:
+      $ref: '../swagger/paths/contacts/{id}/get.yaml'
+    patch:
+      $ref: '../swagger/paths/contacts/{id}/patch.yaml'
+    delete:
+      $ref: '../swagger/paths/contacts/{id}/delete.yaml'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for authentication

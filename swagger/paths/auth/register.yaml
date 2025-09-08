@@ -1,0 +1,85 @@
+tags:
+  - Auth
+summary: Register a new user
+operationId: registerUser
+description: Create a new user account
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+            description: User's full name
+            example: 'John Doe'
+          email:
+            type: string
+            format: email
+            description: User's email address
+            example: 'john.doe@example.com'
+          password:
+            type: string
+            format: password
+            description: User's password (6-32 characters)
+            example: 'password123'
+        required:
+          - name
+          - email
+          - password
+responses:
+  '201':
+    description: Successfully registered user
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: 'Successfully registered a user!'
+            data:
+              $ref: ../../components/schemas/user.yaml
+  '400':
+    description: Bad request - Validation error
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 400
+            message:
+              type: string
+              example: 'Validation error'
+  '409':
+    description: Conflict - Email already in use
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 409
+            message:
+              type: string
+              example: 'Email in use'
+  '500':
+    description: Internal server error
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 500
+            message:
+              type: string
+              example: 'Internal server error'

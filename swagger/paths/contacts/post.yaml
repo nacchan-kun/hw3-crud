@@ -1,0 +1,131 @@
+tags:
+  - Contacts
+summary: Create a new contact
+operationId: createContact
+description: Create a new contact for the authenticated user with optional photo upload
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+            description: Contact's full name
+            example: 'John Doe'
+          phoneNumber:
+            type: string
+            description: Contact's phone number
+            example: '+1234567890'
+          email:
+            type: string
+            format: email
+            description: Contact's email address (optional)
+            example: 'john.doe@example.com'
+          isFavourite:
+            type: boolean
+            description: Whether the contact is marked as favourite
+            default: false
+            example: true
+          contactType:
+            type: string
+            enum: [work, home, personal]
+            description: Type of contact
+            example: 'personal'
+          photo:
+            type: string
+            format: binary
+            description: Contact photo file (optional)
+        required:
+          - name
+          - phoneNumber
+          - contactType
+    application/json:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+            description: Contact's full name
+            example: 'John Doe'
+          phoneNumber:
+            type: string
+            description: Contact's phone number
+            example: '+1234567890'
+          email:
+            type: string
+            format: email
+            description: Contact's email address (optional)
+            example: 'john.doe@example.com'
+          isFavourite:
+            type: boolean
+            description: Whether the contact is marked as favourite
+            default: false
+            example: true
+          contactType:
+            type: string
+            enum: [work, home, personal]
+            description: Type of contact
+            example: 'personal'
+        required:
+          - name
+          - phoneNumber
+          - contactType
+responses:
+  '201':
+    description: Successfully created contact
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: 'Successfully created a contact!'
+            data:
+              $ref: ../../components/schemas/contact.yaml
+  '400':
+    description: Bad request - Validation error
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 400
+            message:
+              type: string
+              example: 'Missing required fields: name, phoneNumber, contactType'
+  '401':
+    description: Unauthorized - Invalid or missing token
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: 'Unauthorized'
+  '500':
+    description: Internal server error
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 500
+            message:
+              type: string
+              example: 'Internal server error'
