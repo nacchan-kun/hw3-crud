@@ -3,6 +3,8 @@ tags:
 summary: Refresh access token
 operationId: refreshAccessToken
 description: Refresh access token using refresh token from cookies
+security:
+  - cookieAuth: []
 responses:
   '200':
     description: Successfully refreshed session

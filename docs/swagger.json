@@ -310,6 +310,11 @@
         "summary": "Refresh access token",
         "operationId": "refreshAccessToken",
         "description": "Refresh access token using refresh token from cookies",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successfully refreshed session",
@@ -1488,6 +1493,12 @@
         "scheme": "bearer",
         "bearerFormat": "JWT",
         "description": "JWT token for authentication"
+      },
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "refreshToken",
+        "description": "Refresh token stored in HTTP-only cookie"
       }
     },
     "schemas": {

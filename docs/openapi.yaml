@@ -71,3 +71,8 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: JWT token for authentication
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: refreshToken
+      description: Refresh token stored in HTTP-only cookie
