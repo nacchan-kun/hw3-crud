@@ -1,30 +1,15 @@
-import swaggerUi from 'swagger-ui-express';
-import { loadSwaggerSpec } from '../utils/swagger.js';
+import createHttpError from 'http-errors';
+import swaggerUI from 'swagger-ui-express';
+import fs from 'node:fs';
+
+import { SWAGGER_PATH } from '../constants/index.js';
 
 export const swaggerDocs = () => {
-  const swaggerSpec = loadSwaggerSpec();
-  
-  if (!swaggerSpec) {
-    // Return a middleware that shows an error if swagger spec fails to load
-    return (req, res, next) => {
-      res.status(500).json({
-        error: 'Failed to load API documentation',
-        message: 'Swagger specification could not be loaded'
-      });
-    };
+  try {
+    const swaggerDoc = JSON.parse(fs.readFileSync(SWAGGER_PATH).toString());
+    return [...swaggerUI.serve, swaggerUI.setup(swaggerDoc)];
+  } catch (err) {
+    return (req, res, next) =>
+      next(createHttpError(500, "Can't load swagger docs"));
   }
-
-  // Return swagger UI middleware with custom configuration
-  return [
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerSpec, {
-      explorer: true,
-      customCss: '.swagger-ui .topbar { display: none }',
-      customSiteTitle: 'Contacts Management API Documentation',
-      customfavIcon: '/favicon.ico',
-      swaggerOptions: {
-        persistAuthorization: true,
-      }
-    })
-  ];
 };
