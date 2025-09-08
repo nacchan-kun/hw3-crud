@@ -2,13 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
 import cookieParser from 'cookie-parser';
-import swaggerUi from 'swagger-ui-express';
 
 import contactsRouter from './routers/contacts.js';
 import authRouter from './routers/auth.js';
 import errorHandler from './middlewares/errorHandler.js';
 import notFoundHandler from './middlewares/notFoundHandler.js';
-import { loadSwaggerSpec } from './utils/swagger.js';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
 
 export const setupServer = () => {
   const app = express();
@@ -30,14 +29,7 @@ export const setupServer = () => {
   app.use(cookieParser());
 
   // API Documentation route
-  const swaggerSpec = loadSwaggerSpec();
-  if (swaggerSpec) {
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-      explorer: true,
-      customCss: '.swagger-ui .topbar { display: none }',
-      customSiteTitle: 'Contacts Management API Documentation'
-    }));
-  }
+  app.use('/api-docs', swaggerDocs());
 
   // Welcome роут для кореня
   app.get('/', (req, res) => {
